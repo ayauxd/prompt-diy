@@ -1,4 +1,3 @@
-
 import { ArrowRight, Star, CheckCircle, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +7,7 @@ const Index = () => {
   const [inputText, setInputText] = useState("");
   const [refinedPrompt, setRefinedPrompt] = useState("");
   const [isRefining, setIsRefining] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -17,6 +17,11 @@ const Index = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputText(e.target.value);
+    setCharacterCount(e.target.value.length);
+  };
 
   const handleRefine = async () => {
     if (!inputText.trim()) {
@@ -82,32 +87,49 @@ const Index = () => {
       <section className="pt-32 md:pt-40 pb-20">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 animate-fade-in relative">
               Transform messy text into powerful AI prompts—instantly.
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-orange/10 to-transparent opacity-50" style={{
+                maskImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50Z' fill='%23000'/%3E%3C/svg%3E\")",
+                maskSize: "cover"
+              }}></div>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-10 animate-fade-in">
               CrackedPrompts refines your chat transcripts or notes into concise prompts for GPT or other LLMs—no prompt engineering expertise needed.
             </p>
             
             {/* Interactive Demo */}
-            <div className="mt-12 max-w-2xl mx-auto">
-              <div className="glass p-6 space-y-4">
+            <div className="mt-12 max-w-2xl mx-auto relative">
+              <div className={`glass p-6 space-y-4 transition-all duration-300 ${inputText ? 'scale-105' : ''}`}>
                 <textarea
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={handleInputChange}
                   placeholder="Paste your text here... (e.g., meeting notes, chat logs, or any text you want to refine into a prompt)"
-                  className="w-full h-32 p-4 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange/50"
+                  className={`w-full transition-all duration-300 ${
+                    inputText ? 'h-40' : 'h-32'
+                  } p-4 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange/50`}
                 />
+                {characterCount > 0 && (
+                  <div className="text-sm text-gray-500 text-right animate-fade-in">
+                    {characterCount} characters
+                  </div>
+                )}
                 <button
                   onClick={handleRefine}
                   disabled={isRefining}
-                  className="button-primary w-full flex items-center justify-center gap-2"
+                  className={`button-primary w-full flex items-center justify-center gap-2 transition-all duration-300 ${
+                    inputText ? 'scale-105' : ''
+                  }`}
                 >
                   {isRefining ? (
-                    <>
+                    <div className="relative">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Refining...
-                    </>
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange/20 to-transparent animate-pulse" style={{
+                        maskImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50Z' fill='%23000'/%3E%3C/svg%3E\")",
+                        maskSize: "cover"
+                      }}></div>
+                      <span>Refining...</span>
+                    </div>
                   ) : (
                     <>
                       Refine Now
@@ -118,12 +140,24 @@ const Index = () => {
                 {refinedPrompt && (
                   <div
                     onClick={copyToClipboard}
-                    className="mt-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="mt-4 glass p-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 animate-fade-in"
                   >
                     <p className="text-sm text-gray-500 mb-2">Click to copy your refined prompt:</p>
                     <p className="text-gray-900">{refinedPrompt}</p>
+                    <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-br from-orange/10 to-transparent opacity-50 pointer-events-none" style={{
+                      maskImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50Z' fill='%23000'/%3E%3C/svg%3E\")",
+                      maskSize: "cover"
+                    }}></div>
                   </div>
                 )}
+              </div>
+              {/* Brand Watermark */}
+              <div className="absolute -bottom-12 right-0 opacity-30">
+                <img
+                  src="/lovable-uploads/c6b6156d-de66-4da8-ac0b-3f95a2628ac0.png"
+                  alt="CrackedPrompts Watermark"
+                  className="h-8 md:h-10"
+                />
               </div>
             </div>
           </div>
