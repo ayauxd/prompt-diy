@@ -13,10 +13,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #E24B0Faa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #E24B0Faa);
 }
 
 @keyframes logo-spin {
@@ -46,19 +46,80 @@
 @keyframes shatter {
   0% {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.95) rotate(-2deg);
   }
   50% {
     opacity: 0.5;
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(1deg);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
 }
 
 .shatter-effect {
   animation: shatter 0.3s ease-out forwards;
+}
+
+/* Enhanced glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Brand colors */
+:root {
+  --orange-primary: #E24B0F;
+  --orange-light: #FF6B3D;
+  --orange-dark: #C13D0A;
+  --text-primary: #2B2B2B;
+  --text-secondary: #666666;
+  --background-light: #F9F9F9;
+}
+
+/* Button styles */
+.button-primary {
+  background-color: var(--orange-primary);
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-primary:hover {
+  background-color: var(--orange-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(226, 75, 15, 0.2);
+}
+
+.button-primary:active {
+  transform: translateY(0);
+}
+
+/* Navigation styles */
+.nav-link {
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: var(--orange-primary);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .button-primary {
+    padding: 0.625rem 1.25rem;
+  }
 }
 

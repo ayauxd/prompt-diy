@@ -1,6 +1,10 @@
+
 import { ArrowRight, Star, CheckCircle, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+
+// Track daily usage - in a real app, this would be persisted
+const MAX_FREE_DAILY_USES = 3;
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -8,6 +12,8 @@ const Index = () => {
   const [refinedPrompt, setRefinedPrompt] = useState("");
   const [isRefining, setIsRefining] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
+  const [usageCount, setUsageCount] = useState(0);
+  const [showUsageLimitOverlay, setShowUsageLimitOverlay] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -23,6 +29,12 @@ const Index = () => {
     setCharacterCount(e.target.value.length);
   };
 
+  const resetInput = () => {
+    setInputText("");
+    setCharacterCount(0);
+    setRefinedPrompt("");
+  };
+
   const handleRefine = async () => {
     if (!inputText.trim()) {
       toast({
@@ -30,6 +42,11 @@ const Index = () => {
         description: "Your text needs to be at least a few words long.",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (usageCount >= MAX_FREE_DAILY_USES) {
+      setShowUsageLimitOverlay(true);
       return;
     }
 
@@ -43,6 +60,7 @@ const Index = () => {
           .join(" ")
       );
       setIsRefining(false);
+      setUsageCount(prev => prev + 1);
       toast({
         title: "Prompt refined!",
         description: "Click the prompt to copy it to your clipboard.",
@@ -105,7 +123,7 @@ const Index = () => {
                   value={inputText}
                   onChange={handleInputChange}
                   placeholder="Paste your text here... (e.g., meeting notes, chat logs, or any text you want to refine into a prompt)"
-                  className={`w-full transition-all duration-300 ${
+                  className={`w-full transition-all duration-300 font-inter ${
                     inputText ? 'h-40' : 'h-32'
                   } p-4 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange/50`}
                 />
@@ -144,6 +162,12 @@ const Index = () => {
                   >
                     <p className="text-sm text-gray-500 mb-2">Click to copy your refined prompt:</p>
                     <p className="text-gray-900">{refinedPrompt}</p>
+                    <button 
+                      onClick={resetInput}
+                      className="mt-4 text-orange hover:text-orange-dark transition-colors"
+                    >
+                      Try another prompt
+                    </button>
                     <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-br from-orange/10 to-transparent opacity-50 pointer-events-none" style={{
                       maskImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50Z' fill='%23000'/%3E%3C/svg%3E\")",
                       maskSize: "cover"
@@ -151,6 +175,33 @@ const Index = () => {
                   </div>
                 )}
               </div>
+              {/* Usage Limit Overlay */}
+              {showUsageLimitOverlay && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+                  <div className="glass p-8 max-w-md mx-4 relative overflow-hidden">
+                    <h3 className="text-2xl font-bold mb-4">Usage Limit Reached</h3>
+                    <p className="text-gray-600 mb-6">
+                      You've reached your free daily limit. Upgrade to Pro for unlimited prompts!
+                    </p>
+                    <div className="flex gap-4">
+                      <button 
+                        onClick={() => setShowUsageLimitOverlay(false)}
+                        className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Maybe Later
+                      </button>
+                      <button 
+                        onClick={() => window.location.href = '#pricing'}
+                        className="button-primary"
+                      >
+                        Upgrade Now
+                      </button>
+                    </div>
+                    <div className="absolute -top-12 -right-12 w-24 h-24 bg-gradient-to-br from-orange/20 to-transparent opacity-50 transform rotate-45"></div>
+                    <div className="absolute -bottom-12 -left-12 w-24 h-24 bg-gradient-to-tl from-orange/20 to-transparent opacity-50 transform -rotate-45"></div>
+                  </div>
+                </div>
+              )}
               {/* Brand Watermark */}
               <div className="absolute -bottom-12 right-0 opacity-30">
                 <img
