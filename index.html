@@ -1,12 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>prompt-cruncher</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-    <meta property="og:image" content="/og-image.png" />
+    <title>Cracked Prompts - Transform Text into Powerful AI Prompts</title>
+    <meta name="description" content="Cracked Prompts refines your chat transcripts or notes into concise prompts for GPT or other LLMs—no prompt engineering expertise needed." />
+    <meta name="keywords" content="AI prompt generator, creative writing prompts, original ideas, prompt engineering, AI writing assistant, GPT prompts, LLM prompts, content creation" />
+    <meta name="author" content="Cracked Prompts" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Cracked Prompts - Transform Text into Powerful AI Prompts" />
+    <meta property="og:description" content="Refine your ideas into powerful prompts for any AI model. No prompt engineering expertise needed." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://crackedprompts.com" />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cracked Prompts - AI Prompt Generator" />
+    <meta name="twitter:description" content="Transform your ideas into powerful AI prompts with Cracked Prompts." />
+    <meta name="theme-color" content="#E24B0F" />
+    <!-- Preload critical assets -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" as="style" />
+    <link rel="preload" href="/src/index.css" as="style" />
   </head>
 
   <body>
@@ -14,5 +28,45 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Google Analytics Script -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+      
+      // Track chat interactions
+      document.addEventListener('DOMContentLoaded', function() {
+        // Track chat expansion
+        document.addEventListener('click', function(e) {
+          if (e.target.closest('button') && e.target.textContent.includes('Begin')) {
+            gtag('event', 'chat_expanded', {
+              'event_category': 'engagement',
+              'event_label': 'Chat UI Opened'
+            });
+          }
+          
+          // Track tier transitions
+          if (e.target.closest('button') && 
+              (e.target.textContent.includes('CreativeFlow') || 
+               e.target.textContent.includes('Crack\'d AF'))) {
+            gtag('event', 'tier_transition', {
+              'event_category': 'engagement',
+              'event_label': e.target.textContent
+            });
+          }
+          
+          // Track CTA clicks
+          if (e.target.closest('button') && e.target.textContent.includes('Try It Now')) {
+            gtag('event', 'cta_click', {
+              'event_category': 'conversion',
+              'event_label': 'Try It Now'
+            });
+          }
+        });
+      });
+    </script>
   </body>
 </html>

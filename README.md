@@ -1,69 +1,71 @@
-# Welcome to your Lovable project
+# CrackedPrompts
 
-## Project info
+A modern, accessible prompt engineering tool with multiple modes to help you create better prompts for AI models.
 
-**URL**: https://lovable.dev/projects/a80a35b4-a949-4a6f-a6d4-4667e8e2f41d
+## Features
 
-## How can I edit this code?
+- **Multiple Prompt Modes**: Choose between Quick, Creative Flow, and CrackedAF modes for different prompt generation styles
+- **Accessibility Focused**: WCAG 2.1 AA compliant with proper contrast ratios and ARIA attributes
+- **Responsive Design**: Works seamlessly on mobile and desktop devices
+- **Performance Optimized**: Lazy loading and code splitting for faster load times
+- **Analytics Integration**: Track user engagement and session metrics
+- **Keyboard Navigation**: Full keyboard support for all interactive elements
+- **Copy Functionality**: Easily copy generated prompts to clipboard
+- **Swipe Navigation**: Mobile-friendly gesture support with Hammer.js
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/a80a35b4-a949-4a6f-a6d4-4667e8e2f41d) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
+## Technologies Used
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- React Router
+- React Query
+- Hammer.js for gesture support
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/a80a35b4-a949-4a6f-a6d4-4667e8e2f41d) and click on Share -> Publish.
+Follow these steps to run the project locally:
 
-## I want to use a custom domain - is that possible?
+```sh
+# Clone the repository
+git clone <YOUR_GIT_URL>
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+# Navigate to the project directory
+cd cracked
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+The application will be available at http://localhost:3000
+
+## Project Structure
+
+- `src/pages/Index.tsx`: Main application page with chat interface
+- `src/components/ui/`: UI components from shadcn-ui
+- `src/hooks/`: Custom React hooks
+- `src/lib/`: Utility functions
+
+## Accessibility Features
+
+- High contrast UI elements
+- Proper ARIA labels and roles
+- Keyboard navigation support
+- Focus management
+- Screen reader friendly content
+
+## Performance Optimizations
+
+- Component lazy loading
+- Optimized assets
+- Efficient state management
+- Minimized re-renders
+
+## License
+
+MIT

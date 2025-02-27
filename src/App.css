@@ -1,9 +1,8 @@
-
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0;
+  text-align: left;
 }
 
 .logo {
@@ -68,6 +67,7 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
 }
 
 /* Brand colors */
@@ -80,6 +80,13 @@
   --background-light: #F9F9F9;
 }
 
+/* Ensure form elements are interactive */
+input, textarea, button, select {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10;
+}
+
 /* Button styles */
 .button-primary {
   background-color: var(--orange-primary);
@@ -88,6 +95,7 @@
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-in-out;
+  pointer-events: auto;
 }
 
 .button-primary:hover {
@@ -121,5 +129,50 @@
   .button-primary {
     padding: 0.625rem 1.25rem;
   }
+}
+
+/* CrackedPrompts styles */
+.cracked-header {
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.cracked-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.cracked-input-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cracked-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.cracked-feature-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.2s;
+}
+
+.cracked-feature-button:hover {
+  background-color: #f9fafb;
 }
 

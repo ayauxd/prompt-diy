@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" height="40" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simplified crack lines for smaller size -->
+  <g stroke="#aaa" stroke-width="0.3" fill="none" opacity="0.5">
+    <path d="M20,20 L30,10" />
+    <path d="M20,20 L35,15" />
+    <path d="M20,20 L40,22" />
+    <path d="M20,20 L35,30" />
+    <path d="M20,20 L25,35" />
+    <path d="M20,20 L15,30" />
+    <path d="M20,20 L10,25" />
+    <path d="M20,20 L12,15" />
+    <path d="M20,20 L5,10" />
+  </g>
+  
+  <!-- Text with minimal styling -->
+  <text x="45" y="26" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600" fill="#E24B0F">CrackedPrompts</text>
+  
+  <!-- Small icon -->
+  <circle cx="20" cy="20" r="15" fill="white" stroke="#E24B0F" stroke-width="1.5" />
+  <path d="M20,20 L30,10 M20,20 L35,15 M20,20 L10,25 M20,20 L15,30" stroke="#E24B0F" stroke-width="1.5" fill="none" />
+</svg> 
