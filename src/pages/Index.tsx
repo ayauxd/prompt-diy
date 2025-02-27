@@ -1,9 +1,14 @@
 
-import { ArrowRight, Star, CheckCircle } from "lucide-react";
+import { ArrowRight, Star, CheckCircle, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [refinedPrompt, setRefinedPrompt] = useState("");
+  const [isRefining, setIsRefining] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,6 +17,42 @@ const Index = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleRefine = async () => {
+    if (!inputText.trim()) {
+      toast({
+        title: "Please enter some text",
+        description: "Your text needs to be at least a few words long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsRefining(true);
+    // Simulate API call with timeout
+    setTimeout(() => {
+      setRefinedPrompt(
+        inputText
+          .split(" ")
+          .filter((word) => word.length > 3)
+          .join(" ")
+      );
+      setIsRefining(false);
+      toast({
+        title: "Prompt refined!",
+        description: "Click the prompt to copy it to your clipboard.",
+      });
+    }, 1500);
+  };
+
+  const copyToClipboard = async () => {
+    if (!refinedPrompt) return;
+    await navigator.clipboard.writeText(refinedPrompt);
+    toast({
+      title: "Copied to clipboard!",
+      description: "Your refined prompt is ready to use.",
+    });
+  };
 
   return (
     <div className="min-h-screen">
@@ -47,10 +88,43 @@ const Index = () => {
             <p className="text-xl md:text-2xl text-gray-600 mb-10 animate-fade-in">
               CrackedPrompts refines your chat transcripts or notes into concise prompts for GPT or other LLMs—no prompt engineering expertise needed.
             </p>
-            <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in">
-              <button className="button-primary flex items-center justify-center gap-2">
-                Try It Free <ArrowRight className="w-5 h-5" />
-              </button>
+            
+            {/* Interactive Demo */}
+            <div className="mt-12 max-w-2xl mx-auto">
+              <div className="glass p-6 space-y-4">
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Paste your text here... (e.g., meeting notes, chat logs, or any text you want to refine into a prompt)"
+                  className="w-full h-32 p-4 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange/50"
+                />
+                <button
+                  onClick={handleRefine}
+                  disabled={isRefining}
+                  className="button-primary w-full flex items-center justify-center gap-2"
+                >
+                  {isRefining ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Refining...
+                    </>
+                  ) : (
+                    <>
+                      Refine Now
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+                {refinedPrompt && (
+                  <div
+                    onClick={copyToClipboard}
+                    className="mt-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <p className="text-sm text-gray-500 mb-2">Click to copy your refined prompt:</p>
+                    <p className="text-gray-900">{refinedPrompt}</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
