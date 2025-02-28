@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Hammer from 'hammerjs';
 import { Copy, Loader2, RefreshCw, Info, Play, ChevronLeft, ChevronRight, Zap, Sparkles, Lightbulb, Wand2, File, X, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
@@ -51,12 +50,12 @@ const ChatUI: React.FC<ChatUIProps> = ({ onClose, initialMessage = '' }) => {
   const modeThemes = {
     quick: {
       primary: '#E24B0F',
-      secondary: '#FFE5D9',
+      secondary: '#FFFFFF',
       tabPosition: 'translate-x-0'
     },
     creativeFlow: {
       primary: '#4A90E2',
-      secondary: '#E3F2FD',
+      secondary: '#FFF3E0',
       tabPosition: 'translate-x-[33%]'
     },
     crackedAF: {
@@ -457,8 +456,13 @@ const ChatUI: React.FC<ChatUIProps> = ({ onClose, initialMessage = '' }) => {
           <div className="relative w-full bg-gray-100 h-12">
             {/* Tab Background Slider */}
             <div 
-              className="absolute h-full w-1/3 bg-white transition-transform duration-300 ease-in-out rounded-t-lg shadow-sm"
-              style={{ transform: currentTheme.tabPosition }}
+              className="absolute h-full w-1/3 transition-transform duration-300 ease-in-out rounded-t-lg shadow-sm"
+              style={{ 
+                transform: currentTheme.tabPosition,
+                backgroundColor: chatMode === 'quick' ? '#FFFFFF' : 
+                                 chatMode === 'creativeFlow' ? '#FFF3E0' : 
+                                 '#FFE5D9'  // More orange for CrackedAF
+              }}
             />
             
             {/* Tab Buttons */}
@@ -476,7 +480,7 @@ const ChatUI: React.FC<ChatUIProps> = ({ onClose, initialMessage = '' }) => {
               <button
                 onClick={() => handleModeTabClick('creativeFlow')}
                 className={`flex-1 flex items-center justify-center gap-2 transition-colors duration-300 ${
-                  chatMode === 'creativeFlow' ? 'text-[#4A90E2]' : 'text-gray-600'
+                  chatMode === 'creativeFlow' ? 'text-[#E67E22]' : 'text-gray-600'
                 }`}
               >
                 <Sparkles className="w-4 h-4" />
@@ -486,7 +490,7 @@ const ChatUI: React.FC<ChatUIProps> = ({ onClose, initialMessage = '' }) => {
               <button
                 onClick={() => handleModeTabClick('crackedAF')}
                 className={`flex-1 flex items-center justify-center gap-2 transition-colors duration-300 ${
-                  chatMode === 'crackedAF' ? 'text-[#9B59B6]' : 'text-gray-600'
+                  chatMode === 'crackedAF' ? 'text-[#E24B0F]' : 'text-gray-600'
                 }`}
               >
                 <Wand2 className="w-4 h-4" />

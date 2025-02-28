@@ -1,7 +1,6 @@
 import { ArrowRight, Lightbulb, Zap, Clock, CheckCircle, Loader2, Settings, Save, Search, Brain, MessageSquare, Sparkles, Copy, RefreshCw, Info, ChevronLeft, Wand2, Layers, Play } from "lucide-react";
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
-import Hammer from 'hammerjs';
 import ChatUI from "../components/ChatUI";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -508,8 +507,8 @@ const Index = () => {
   // Add this to the useEffect section for performance monitoring
   useEffect(() => {
     // Performance monitoring
-    const reportWebVitals = ({ name, delta, id }) => {
-      trackAnalyticsEvent('performance', name, `ID: ${id} - Delta: ${delta}`);
+    const reportWebVitals = ({ name, delta, id }: { name: string; delta: number; id: string }) => {
+      trackAnalyticsEvent('web_vitals', name, `ID: ${id} Delta: ${delta}`);
     };
 
     // Add event listeners for key metrics
@@ -535,39 +534,6 @@ const Index = () => {
       };
     }
   }, [chatMode]);
-
-  // Add Hammer.js swipe functionality
-  useEffect(() => {
-    if (showChatUI) {
-      const chatContainer = document.getElementById('chat-interface');
-      if (chatContainer) {
-        const hammer = new Hammer(chatContainer);
-        hammer.on('swipeleft', () => {
-          if (chatMode === 'quick') {
-            handleModeTransition('creativeFlow');
-            trackAnalyticsEvent('navigation', 'swipe_transition', 'quick_to_creativeFlow');
-          } else if (chatMode === 'creativeFlow') {
-            handleModeTransition('crackedAF');
-            trackAnalyticsEvent('navigation', 'swipe_transition', 'creativeFlow_to_crackedAF');
-          }
-        });
-        
-        hammer.on('swiperight', () => {
-          if (chatMode === 'crackedAF') {
-            handleModeTransition('creativeFlow');
-            trackAnalyticsEvent('navigation', 'swipe_transition', 'crackedAF_to_creativeFlow');
-          } else if (chatMode === 'creativeFlow') {
-            handleModeTransition('quick');
-            trackAnalyticsEvent('navigation', 'swipe_transition', 'creativeFlow_to_quick');
-          }
-        });
-        
-        return () => {
-          hammer.destroy();
-        };
-      }
-    }
-  }, [showChatUI, chatMode]);
 
   // Update input placeholder based on chat mode
   const getInputPlaceholder = () => {
@@ -775,6 +741,36 @@ const Index = () => {
       document.head.removeChild(style);
     };
   }, []);
+
+  // Track animation progress and coordinate
+  useEffect(() => {
+    if (!showChatUI) return;
+    
+    // Setup animation for mode transitions
+    const setupAnimations = () => {
+      // Listen for CSS transition end
+      const tabs = document.querySelectorAll('.mode-tab');
+      tabs.forEach((tab) => {
+        tab.addEventListener('transitionend', (e: Event) => {
+          const target = e.target as HTMLElement;
+          if (target.classList.contains('active-tab')) {
+            target.classList.add('animation-complete');
+          }
+        });
+      });
+    };
+    
+    // Setup animations after component mounts
+    setupAnimations();
+    
+    // Clean up animations on component unmount
+    return () => {
+      const tabs = document.querySelectorAll('.mode-tab');
+      tabs.forEach((tab) => {
+        tab.removeEventListener('transitionend', () => {});
+      });
+    };
+  }, [showChatUI]);
 
   return (
     <div className="min-h-screen bg-white">
