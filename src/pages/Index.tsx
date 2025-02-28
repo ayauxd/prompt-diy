@@ -74,6 +74,7 @@ const Index = () => {
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const [promptCopied, setPromptCopied] = useState(false);
   
   const { toast } = useToast();
 
@@ -151,54 +152,26 @@ const Index = () => {
   
   // Handle refreshing the prompt
   const handleRefreshPrompt = () => {
-    if (refreshCount >= MAX_REFRESHES) return;
-    
-    // Track prompt refresh
-    trackChatInteraction('prompt_refresh', `${chatMode} - ${refreshCount + 1}`);
-    
-    setRefreshCount(prev => prev + 1);
-    setIsGeneratingPrompt(true);
-    
-    // Remove the last system message (the prompt)
-    setMessages(prev => prev.filter((_, index) => index !== prev.length - 1));
-    
-    // Determine generation time based on mode
-    const generationTime = 
-      chatMode === 'quick' ? 60000 : // 1 minute for Quick Mode
-      chatMode === 'creativeFlow' ? 90000 : // 1.5 minutes for CreativeFlow
-      120000; // 2 minutes for Crack'd AF
-    
-    // Generate a new prompt based on the current mode
-    setTimeout(() => {
-      let newPrompt = "";
+    if (refreshCount < MAX_REFRESHES) {
+      setRefreshCount(prev => prev + 1);
+      // Track refresh event
+      trackAnalyticsEvent('engagement', 'prompt_refreshed', chatMode);
+      // In a real implementation, you would call your API to generate a new prompt
+      // For now, we'll simulate a loading state
+      setGeneratedPrompt("Generating a new prompt for you...");
       
-      switch(chatMode) {
-        case 'quick':
-          newPrompt = generateQuickModePrompt();
-          break;
-        case 'creativeFlow':
-          newPrompt = generateCreativeFlowPrompt();
-          break;
-        case 'crackedAF':
-          newPrompt = generateCrackedAFPrompt();
-          break;
-        default:
-          newPrompt = generateQuickModePrompt();
-      }
-      
-      setGeneratedPrompt(newPrompt);
-      
-      // Add system message with the new generated prompt
-      const newSystemMessage: Message = {
-        id: Date.now().toString(),
-        text: newPrompt,
-        sender: 'system',
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, newSystemMessage]);
-      setIsGeneratingPrompt(false);
-    }, generationTime);
+      // Simulate API call delay
+      setTimeout(() => {
+        setGeneratedPrompt(`Here's a refreshed prompt for ${inputText || "your task"}: 
+        
+Create a detailed tutorial that explains ${inputText || "the process"} in simple terms that even beginners can understand. Include examples, best practices, and common pitfalls to avoid.`);
+        
+        toast({
+          title: "Prompt refreshed!",
+          description: "We've generated a new prompt for you.",
+        });
+      }, 1000);
+    }
   };
   
   // Generate a prompt based on user messages
@@ -370,6 +343,8 @@ const Index = () => {
       .then(() => {
         // Track successful copy
         trackAnalyticsEvent('engagement', 'prompt_copied', chatMode);
+        setPromptCopied(true);
+        setTimeout(() => setPromptCopied(false), 2000);
         
         toast({
           title: "Copied to clipboard!",
@@ -775,7 +750,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header - CrackedPrompts */}
-      <header className="border-b border-gray-100 py-3 px-4 fixed w-full bg-white z-50">
+      <header className="border-b border-gray-100 py-5 px-6 fixed w-full bg-white z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center">
             <span className="text-xl md:text-2xl uppercase font-['Poppins']">
@@ -783,12 +758,12 @@ const Index = () => {
               <span className="font-light text-[#E24B0F]">PROMPTS</span>
             </span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <a href="/" className="text-gray-700 hover:text-gray-900 text-sm font-medium">Home</a>
             <a href="#features" className="text-gray-700 hover:text-gray-900 text-sm font-medium">Features</a>
             <a href="#how-it-works" className="text-gray-700 hover:text-gray-900 text-sm font-medium">How It Works</a>
             <a href="#testimonials" className="text-gray-700 hover:text-gray-900 text-sm font-medium">Testimonials</a>
-            <button className="bg-[#E24B0F] hover:bg-[#C13D0A] text-white text-sm font-medium px-3 py-1.5 rounded-md transition-colors">
+            <button className="bg-[#E24B0F] hover:bg-[#C13D0A] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm">
               Sign Up
             </button>
           </div>
@@ -796,65 +771,76 @@ const Index = () => {
       </header>
 
       {/* Hero Section - CrackedPrompts */}
-      <section className="pt-32 pb-16 px-4 bg-white">
+      <section className="pt-40 pb-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
             Great ideas begin with a prompt.
-            </h1>
-          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+          </h1>
+          <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
             Let's connect your innermost thoughts into effective prompts for any AI model
           </p>
           
           {/* Standalone entry field in hero section */}
           {!showChatUI && (
-            <div className="max-w-[600px] mx-auto mb-10 flex items-center">
+            <div className="max-w-[600px] mx-auto mb-14 flex items-center">
               <div className="relative flex-1">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <Lightbulb className="w-5 h-5" />
+                </div>
                 <input
                   type="text"
                   value={inputText}
                   onChange={handleInputChange}
                   onKeyPress={(e) => e.key === 'Enter' && inputText.trim() && setShowChatUI(true)}
                   placeholder="What's on your mind?"
-                  className="w-full h-[50px] bg-[#F5F6FA] text-[#666] rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#E67E22] focus:border-transparent"
+                  className="w-full h-[56px] bg-[#F7F7F8] text-[#333] rounded-full px-12 py-3 border border-[#E0E0E0] focus:outline-none focus:ring-2 focus:ring-[#E24B0F] focus:border-transparent shadow-sm"
                   aria-label="Enter your idea"
                 />
-                  </div>
-                <button
+              </div>
+              <button
                 onClick={() => {
                   if (inputText.trim()) {
-                    setShowChatUI(true);
+                    // Track analytics event
                     trackAnalyticsEvent('engagement', 'hero_prompt_submit', 'from_hero');
+                    // Show the ChatUI to start the guided prompt generation process
+                    setShowChatUI(true);
                   }
                 }}
                 disabled={!inputText.trim()}
-                className="ml-3 h-[50px] px-6 bg-[#E24B0F] hover:bg-[#D35400] text-white font-medium rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-4 h-[56px] px-6 bg-[#E24B0F] hover:bg-[#D35400] text-white font-medium rounded-full flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 aria-label="Generate prompt"
               >
-                Generate Prompt
-                </button>
-                  </div>
-                )}
+                <span>Generate Prompt</span>
+                <Sparkles className="ml-2 w-4 h-4" />
+              </button>
+            </div>
+          )}
           
           {/* Chat UI Component - Displayed when showChatUI is true */}
           {showChatUI && (
-            <div className="mt-6 transition-all duration-700 ease-in-out animate-fadeIn">
+            <div className="mt-8 transition-all duration-500 ease-in-out animate-fadeIn">
               <ChatUI 
-                onClose={() => setShowChatUI(false)} 
+                onClose={() => {
+                  // Only close when the user explicitly clicks the close button
+                  setShowChatUI(false);
+                  // Reset the input if user closes the chat
+                  setInputText("");
+                }} 
                 initialMessage={inputText}
               />
-              </div>
+            </div>
           )}
           
           {/* Text above AI model logos */}
-          <p className="text-gray-700 mb-4 mt-8">
+          <p className="text-gray-700 mb-6 mt-12">
             Generate powerful prompts for any AI assistant
           </p>
           
           {/* Horizontal scroll of AI model logos - Carousel style */}
-          <div className="relative w-full overflow-hidden mb-8">
+          <div className="relative w-full overflow-hidden mb-12">
             <div 
               ref={scrollRef}
-              className="flex gap-8 py-6 animate-carousel"
+              className="flex gap-10 py-8 animate-carousel"
               style={{
                 whiteSpace: 'nowrap'
               }}
@@ -862,7 +848,7 @@ const Index = () => {
               {/* Double the logos for seamless looping */}
               {[...aiModels, ...aiModels].map((model, index) => (
                 <div key={index} className="flex flex-col items-center min-w-[120px] inline-block">
-                  <div className="w-16 h-16 rounded-full bg-white shadow-md flex items-center justify-center mb-2">
+                  <div className="w-16 h-16 rounded-full bg-white border border-[#E0E0E0] shadow-sm flex items-center justify-center mb-3 hover:bg-[#F8F8F8] transition-colors">
                     <img 
                       src={`/ai-logos/${model.toLowerCase().replace(' ', '-')}.svg`} 
                       alt={`${model} logo`}
@@ -872,40 +858,28 @@ const Index = () => {
                         e.currentTarget.src = '/ai-logos/generic-ai.svg';
                       }}
                     />
-                    </div>
-                  <span className="text-sm text-gray-600">{model}</span>
                   </div>
-              ))}
+                  <span className="text-sm text-gray-600">{model}</span>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
           
           {/* Subheadlines */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-[#E24B0F] mb-2">Unlocks your hidden ideas</h3>
-              <p className="text-gray-600 text-sm">Discover insights you didn't know you had through our guided prompt refinement</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-[#E0E0E0] hover:shadow-md transition-all duration-300">
+              <h3 className="text-lg font-semibold text-[#E24B0F] mb-3">Unlocks your hidden ideas</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Discover insights you didn't know you had through our guided prompt refinement</p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-[#E24B0F] mb-2">Crafting powerful, original questions</h3>
-              <p className="text-gray-600 text-sm">Transform vague thoughts into precise, actionable prompts that get results</p>
-          </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-[#E24B0F] mb-2">Maximize AI's potential</h3>
-              <p className="text-gray-600 text-sm">Get the most out of any AI model with expertly refined prompts tailored to your needs</p>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-[#E0E0E0] hover:shadow-md transition-all duration-300">
+              <h3 className="text-lg font-semibold text-[#E24B0F] mb-3">Crafting powerful, original questions</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Transform vague thoughts into precise, actionable prompts that get results</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-[#E0E0E0] hover:shadow-md transition-all duration-300">
+              <h3 className="text-lg font-semibold text-[#E24B0F] mb-3">Maximize AI's potential</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">Unlock the full capabilities of AI models with expertly crafted prompts</p>
             </div>
           </div>
-          
-          <button 
-            onClick={() => {
-              if (!showChatUI) {
-                setShowChatUI(true);
-                trackAnalyticsEvent('engagement', 'get_started_click', 'from_hero');
-              }
-            }}
-            className="bg-[#E24B0F] hover:bg-[#C13D0A] text-white font-medium px-8 py-3 rounded-lg transition-colors text-lg shadow-lg hover:shadow-xl"
-          >
-            Get Started
-          </button>
         </div>
       </section>
 
@@ -1149,13 +1123,13 @@ const Index = () => {
       </section>
 
       {/* CTA Banner */}
-      <section className="py-16 px-4 bg-[#E24B0F]">
+      <section className="py-20 px-6 bg-[#E24B0F]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Ready to Unlock Your Creativity?</h2>
-          <p className="text-white/80 mb-8">Join thousands of users already transforming their ideas with Cracked Prompts.</p>
+          <h2 className="text-3xl font-bold text-white mb-8">Ready to Unlock Your Creativity?</h2>
+          <p className="text-white/80 mb-10 text-lg">Join thousands of users already transforming their ideas with Cracked Prompts.</p>
           <button 
             onClick={scrollToTop}
-            className="bg-white text-[#E24B0F] font-medium px-8 py-3 rounded-lg transition-colors text-lg shadow-lg hover:shadow-xl hover:bg-gray-50"
+            className="bg-white text-[#E24B0F] font-medium px-8 py-4 rounded-lg transition-colors text-lg shadow-lg hover:shadow-xl hover:bg-gray-50"
           >
             Try It Now
           </button>
@@ -1163,40 +1137,19 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl md:text-2xl uppercase font-['Poppins'] mb-4">
-                <span className="font-bold italic text-white">CRACKED</span>{' '}
-                <span className="font-light text-white">PROMPTS</span>
-              </h3>
-              <p className="text-gray-400">Transform your ideas into powerful AI prompts.</p>
-              <p className="mt-2 text-sm text-gray-400 italic">Great ideas begin with a Prompt</p>
+      <footer className="py-10 px-6 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <span className="text-lg uppercase font-['Poppins']">
+                <span className="font-bold italic text-[#E24B0F]">CRACKED</span>{' '}
+                <span className="font-light text-[#E24B0F]">PROMPTS</span>
+              </span>
             </div>
-            
-            <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="#testimonials" className="text-gray-400 hover:text-white transition-colors">Testimonials</a></li>
-              </ul>
+            <div className="text-center md:text-right">
+              <p className="text-gray-500 text-sm">© {new Date().getFullYear()} Cracked Prompts. All rights reserved.</p>
+              <p className="text-gray-400 text-xs mt-2">Your prompts are processed securely and not stored beyond the session</p>
             </div>
-            
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
-              </ul>
-            </div>
-            </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>© 2025 <span className="font-bold italic">CRACKED</span>{' '}<span className="font-light">PROMPTS</span>. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -1225,6 +1178,37 @@ const Index = () => {
               >
                 Upgrade Now
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Response display area - Only shown after submission when in standalone mode */}
+      {!showChatUI && generatedPrompt && (
+        <div className="bg-[#F9F9F9] rounded-lg p-6 mt-6 shadow-sm max-w-3xl mx-auto border border-[#E0E0E0] animate-fadeIn">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-medium text-gray-800">Your Generated Prompt</h3>
+            <button
+              onClick={copyGeneratedPrompt}
+              className="flex items-center gap-2 text-[#E24B0F] hover:text-[#C13D0A] text-sm"
+              aria-label="Copy prompt to clipboard"
+            >
+              <Copy className="w-4 h-4" />
+              <span>{promptCopied ? 'Copied!' : 'Copy'}</span>
+            </button>
+          </div>
+          <p className="whitespace-pre-wrap text-gray-700">{generatedPrompt}</p>
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={handleRefreshPrompt}
+              disabled={refreshCount >= MAX_REFRESHES}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Refresh</span>
+            </button>
+            <div className="text-xs text-gray-500 flex items-center">
+              {refreshCount}/{MAX_REFRESHES} refreshes used
             </div>
           </div>
         </div>

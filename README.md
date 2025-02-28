@@ -1,4 +1,4 @@
-# CrackedPrompts
+# Crackedpromptdev
 
 A modern, accessible prompt engineering tool with multiple modes to help you create better prompts for AI models.
 
@@ -7,22 +7,28 @@ A modern, accessible prompt engineering tool with multiple modes to help you cre
 - **Multiple Prompt Modes**: Choose between Quick, Creative Flow, and CrackedAF modes for different prompt generation styles
 - **Accessibility Focused**: WCAG 2.1 AA compliant with proper contrast ratios and ARIA attributes
 - **Responsive Design**: Works seamlessly on mobile and desktop devices
-- **Performance Optimized**: Lazy loading and code splitting for faster load times
+- **Performance Optimized**: Lightweight with minimal dependencies for faster load times
 - **Analytics Integration**: Track user engagement and session metrics
 - **Keyboard Navigation**: Full keyboard support for all interactive elements
 - **Copy Functionality**: Easily copy generated prompts to clipboard
-- **Swipe Navigation**: Mobile-friendly gesture support with Hammer.js
 
 ## Technologies Used
 
 - Vite
 - TypeScript
 - React
-- shadcn-ui
+- shadcn-ui (minimal components)
 - Tailwind CSS
 - React Router
-- React Query
-- Hammer.js for gesture support
+
+## Dependency Cleanup
+
+This project has been optimized by removing unused dependencies to improve performance and reduce bundle size:
+
+- Removed unnecessary Radix UI components
+- Removed animation libraries (framer-motion, gsap)
+- Removed unused utility libraries
+- Streamlined to essential dependencies only
 
 ## Getting Started
 
@@ -33,7 +39,7 @@ Follow these steps to run the project locally:
 git clone <YOUR_GIT_URL>
 
 # Navigate to the project directory
-cd cracked
+cd crackedpromptdev
 
 # Install dependencies
 npm install
@@ -42,11 +48,12 @@ npm install
 npm run dev
 ```
 
-The application will be available at http://localhost:3000
+The application will be available at http://localhost:3000 (or another port if 3000 is in use)
 
 ## Project Structure
 
 - `src/pages/Index.tsx`: Main application page with chat interface
+- `src/components/ChatUI.tsx`: Core chat component with multiple modes
 - `src/components/ui/`: UI components from shadcn-ui
 - `src/hooks/`: Custom React hooks
 - `src/lib/`: Utility functions
@@ -61,6 +68,7 @@ The application will be available at http://localhost:3000
 
 ## Performance Optimizations
 
+- Minimized dependencies
 - Component lazy loading
 - Optimized assets
 - Efficient state management
