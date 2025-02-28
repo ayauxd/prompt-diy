@@ -22,3 +22,42 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cursor IDE
+.cursor/
+.cursor-cache/
+.history/
+
+# Build directories
+dist
+build
+.next
+out
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Cache
+.cache
+.eslintcache
+.npm
+.vite
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE specific
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
